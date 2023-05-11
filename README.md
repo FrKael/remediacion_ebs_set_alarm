@@ -32,25 +32,47 @@ Agregar la secuencia `> file.csv` para exportar a **CSV**
 
 *(reemplazar por los valores correctos en <>)*
 ```bash
-aws cloudwatch put-metric-alarm --alarm-name <alarm-namee> --alarm-description "Alarma de inactividad para el volumen EBS" --actions-enabled --alarm-actions <arn:aws:sns:us-east-1:xxxxxxxxxx:AlertaRecursosInutilizados> --metric-name VolumeIdleTime --namespace AWS/EBS --statistic Maximum --period 21600 --evaluation-periods 4 --threshold 600 --comparison-operator GreaterThanOrEqualToThreshold --dimensions Name=VolumeId,Value=<vol-id> --unit Seconds
+aws cloudwatch put-metric-alarm --alarm-name <alarm-namee> \
+--alarm-description "Alarma de inactividad para el volumen EBS" \
+--actions-enabled \
+--alarm-actions <arn:aws:sns:us-east-1:xxxxxxxxxx:AlertaRecursosInutilizados> \
+--metric-name VolumeIdleTime \
+--namespace AWS/EBS \
+--statistic Maximum \
+--period 21600 \
+--evaluation-periods 4 \
+--threshold 600 \
+--comparison-operator GreaterThanOrEqualToThreshold \
+--dimensions Name=VolumeId,Value=<vol-id> \
+--unit Seconds
+
 ```
 
 **3.** Crear el script.
 
 Metodo Bash `(mi_script.sh)``
 
-#!/bin/bash
-
-
-#Definir el comando como una variable
-COM="aws cloudwatch put-metric-alarm --alarm-name awsebs-{}-GreaterThanOrEqualToThreshold-VolumeIdleTime --alarm-description 'Alarma de inactividad para el volumen EBS' --actions-enabled --alarm-actions arn:aws:sns:us-east-1:xxxxxxxxxx:AlertaRecursosInutilizados --metric-name VolumeIdleTime --namespace AWS/EBS --statistic Maximum --period 21600 --evaluation-periods 4 --threshold 600 --comparison-operator GreaterThanOrEqualToThreshold --dimensions Name=VolumeId,Value={} --unit Seconds"
-
 
 ```bash
-#Definir la lista de identificadores de volumen
-VOL_IDS=(
-    "vol-00101001010101010" "vol-00101001010101010" "vol-00101001010101010" "vol-00101001010101010" "vol-00101001010101010" "vol-00101001010101010" "vol-00101001010101010" "vol-00101001010101010" "vol-00101001010101010" "vol-00101001010101010" "vol-00101001010101010" "vol-00101001010101010" "vol-00101001010101010" "vol-00101001010101010" ... )
+#!/bin/bash
 
+#Definir el comando como una variable
+COM="aws cloudwatch put-metric-alarm --alarm-name awsebs-{}-GreaterThanOrEqualToThreshold-VolumeIdleTime --alarm-description 'Alarma de inactividad para el volumen EBS' \
+--actions-enabled --alarm-actions arn:aws:sns:us-east-1:xxxxxxxxxx:AlertaRecursosInutilizados \
+--metric-name VolumeIdleTime --namespace AWS/EBS --statistic Maximum --period 21600 --evaluation-periods 4 \
+--threshold 600 --comparison-operator GreaterThanOrEqualToThreshold --dimensions Name=VolumeId,Value={} --unit Seconds"
+
+#Definir la lista de identificadores de volumen
+VOL_IDS=(\
+    "vol-00101001010101010" "vol-00101001010101010" \
+    "vol-00101001010101010" "vol-00101001010101010" \
+    "vol-00101001010101010" "vol-00101001010101010" \
+    "vol-00101001010101010" "vol-00101001010101010" \
+    "vol-00101001010101010" "vol-00101001010101010" \
+    "vol-00101001010101010" "vol-00101001010101010" \
+    "vol-00101001010101010" "vol-00101001010101010" \
+    ... \
+)
 
 #iterar sobre la lista de identificadores de volumen y ejecutar el comandp
 for id in "${VOL_IDS[@]}"
